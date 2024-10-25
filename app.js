@@ -38,7 +38,7 @@ app.post("/save", async (req, resp) => {
 })
 
 
-app.post("/update-user/:userId", async (req, resp) => {
+app.put("/update-user/:userId", async (req, resp) => {
   let { email, name, password, address } = req.body
   let { userId } = req.params
   console.log(userId)
@@ -54,11 +54,21 @@ app.post("/update-user/:userId", async (req, resp) => {
     })
     resp.status(200).send({ "status": "success", "message": "Update done Success" })
   } else {
-
+    resp.status(500).send({ "status": "failed", "message": "Unable to find user" })
   }
   try {
   } catch (error) {
-    resp.status(500).send({ "status": "failed", "message": "Unable to Register" })
+    resp.status(500).send({ "status": "failed", "message": "Unable to update" })
+  }
+})
+
+app.delete("/delete-user/:userId", async (req, resp) => {
+  try {
+    let user = await User.findByIdAndDelete(req.params.userId)
+    if (user) return resp.status(200).send({ "message": "User is deleted" })
+    return resp.status(400).send({ "message": "Data not found" })
+  } catch (error) {
+    return resp.status(400).send({ "message": "Data not found" })
   }
 })
 
